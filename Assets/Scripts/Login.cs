@@ -16,93 +16,60 @@ using System.Linq;
 
 public class Login : MonoBehaviour
 {
+    [Header("Screens")]
+    public GameObject loginScreen;
+    public GameObject createAccountScreen;
+    public GameObject changePasswordScreen;
+    public GameObject forgotPasswordScreen;
+
     [Header("Login")]
-    public InputField loginEmail;
+    public InputField loginUsername;
     public InputField loginPassword;
-    public Text loginTooltip;
+    public Text loginErrorLog;
 
     [Header("Create account")]
-    public InputField newUsername;
-    public InputField newEmail;
-    public InputField newPassword;
-    public InputField confirmNewPassword;
-    public Text newAccountToolTip;
+    public int usernameCharacterLimit;
+    public InputField createUsername;
+    public InputField createEmail;
+    public InputField createPassword;
+    public InputField confirmCreatePassword;
+    public Text createAccountErrorLog;
 
     [Header("Change password")]
-    public InputField changeemail;
+    public InputField changeEmail;
     public InputField oldPassword;
     public InputField changePassword;
     public InputField confirmChangePassword;
-    public Text changePasswordTooltip;
+    public Text changePasswordErrorLog;
 
-    [Header("Reset password")]
+    [Header("Forgot password")]
     public InputField resetEmail;
-    public Text resetPasswordTooltip;
-
-
-    [Header("Send Email")]
+    public InputField codeInput;
+    public InputField resetPassword;
+    public InputField confirmResetPassword;
+    public Text resetPasswordErrorLog;
     public int portNumber = 8080; //80 25
     public int codeLength = 6;
     public bool caseSensitiveCode = true;
+    string usernameForResetting;
+    string validationCode;
 
-    
-    [Header("Account Details Check")]
-    public int usernameCharacterLimit;
-    public Text errorLog;
-    
-
-    #region Create account
-    public void CreateNewUser()
+    string passwordError = "";
+   
+    public void DisplayScreen(GameObject screen)
     {
-        //StartCoroutine(CreateUser(newUsername.text, newEmail.text, newPassword.text));
+        loginScreen.SetActive(false);
+        createAccountScreen.SetActive(false);
+        changePasswordScreen.SetActive(false);
+        forgotPasswordScreen.SetActive(false);
 
-        
-        if (ValidatePassword(newPassword.text, confirmNewPassword.text) && newUsername.text.Length <= usernameCharacterLimit)
-        {
-            StartCoroutine(CreateUser(newUsername.text, newEmail.text, newPassword.text));
-        }
-        else
-        {
-            /*
-            string errorMessage = "";
-
-            if (limitNotExceeded == false)
-            {
-                errorMessage += "Username character limit exceeded!";
-                errorMessage += "\n";
-            }
-            if (passwordsMatch == false)
-            {
-                errorMessage += "Passwords do not match!";
-                errorMessage += "\n";
-            }
-            if (passwordHasNumbers == false)
-            {
-                errorMessage += "Password does not contain numbers!";
-                errorMessage += "\n";
-            }
-
-            errorLog.text = errorMessage;
-            */
-        }
-        
+        screen.SetActive(true);
     }
 
-    IEnumerator CreateUser(string username, string email, string password)
-    {
-        string createUserURL = "http://localhost/nsirpg/insertuser.php";
-        WWWForm form = new WWWForm();
-        form.AddField("username", username);
-        form.AddField("email", email);
-        form.AddField("password", password);
-        UnityWebRequest webRequest = UnityWebRequest.Post(createUserURL, form);
-        yield return webRequest.SendWebRequest();
-        Debug.Log(webRequest.error);
-    }
-
-    
     bool ValidatePassword(string password, string confirmPassword)
     {
+        passwordError = "";
+
         bool passwordMatches = false;
         bool passwordHasNumbers = false;
         bool passwordHasLowerCaseLetters = false;
@@ -111,15 +78,21 @@ public class Login : MonoBehaviour
         if (password == confirmPassword)
         {
             passwordMatches = true;
+            print("Passwords match.");
         }
 
         string numbers = "0123456789";
-        for(int i = 0; i < numbers.Length; i++)
+        for (int i = 0; i < numbers.Length; i++)
         {
             if (password.Contains(numbers[i]))
             {
                 passwordHasNumbers = true;
             }
+        }
+
+        if (passwordHasNumbers == true)
+        {
+            print("Password contains numbers.");
         }
 
         string lowerCase = "abcdefghijklmnopqrstuvwxyz";
@@ -131,6 +104,11 @@ public class Login : MonoBehaviour
             }
         }
 
+        if (passwordHasLowerCaseLetters == true)
+        {
+            print("Password contains lower case letters.");
+        }
+
         string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         for (int i = 0; i < upperCase.Length; i++)
         {
@@ -139,20 +117,84 @@ public class Login : MonoBehaviour
                 passwordHasUpperCaseLetters = true;
             }
         }
-        
+
+        if (passwordHasUpperCaseLetters == true)
+        {
+            print("Password contains upper case letters.");
+        }
+
         if (passwordMatches == true && passwordHasNumbers == true && passwordHasLowerCaseLetters == true && passwordHasUpperCaseLetters == true)
         {
             return true;
         }
+
+        // Code past this point only runs if the bool does not return true.
+        if (passwordMatches == false)
+        {
+            passwordError += "Passwords do not match!";
+            passwordError += "\n";
+        }
+        if (passwordHasNumbers == false)
+        {
+            passwordError += "Password does not contain numbers!";
+            passwordError += "\n";
+        }
+        if (passwordHasLowerCaseLetters == false)
+        {
+            passwordError += "Password does not contain lower case letters!";
+            passwordError += "\n";
+        }
+        if (passwordHasUpperCaseLetters == false)
+        {
+            passwordError += "Password does not contain upper case letters!";
+            passwordError += "\n";
+        }
         return false;
     }
-    
+
+    #region Create account
+    public void CreateNewUser()
+    {
+        if (ValidatePassword(createPassword.text, confirmCreatePassword.text) && createUsername.text.Length <= usernameCharacterLimit)
+        {
+            StartCoroutine(CreateUser(createUsername.text, createEmail.text, createPassword.text));
+        }
+        else
+        {
+            string errorMessage = "";
+            if (ValidatePassword(createPassword.text, confirmCreatePassword.text) == false)
+            {
+                errorMessage += passwordError;
+            }
+            if (createUsername.text.Length > usernameCharacterLimit)
+            {
+                errorMessage += "Username character limit exceeded!";
+                errorMessage += "\n";
+            }
+            createAccountErrorLog.text = errorMessage;
+        }
+    }
+
+    IEnumerator CreateUser(string username, string email, string password)
+    {
+        string createUserURL = "http://localhost/nsirpg/insertuser.php";
+        WWWForm form = new WWWForm();
+        form.AddField("username", username);
+        form.AddField("email", email);
+        form.AddField("password", password);
+        UnityWebRequest webRequest = UnityWebRequest.Post(createUserURL, form);
+        yield return webRequest.SendWebRequest();
+        Debug.Log(webRequest.downloadHandler.text);
+        createAccountErrorLog.text = webRequest.downloadHandler.text;
+
+        
+    }
     #endregion
 
     #region Login
     public void SubmitLogin()
     {
-        //StartCoroutine(UserLogin(username, newpassword));
+        StartCoroutine(UserLogin(loginUsername.text, loginPassword.text));
     }
 
     IEnumerator UserLogin(string username, string password)
@@ -164,13 +206,14 @@ public class Login : MonoBehaviour
         UnityWebRequest webRequest = UnityWebRequest.Post(createUserURL, form);
         yield return webRequest.SendWebRequest();
         Debug.Log(webRequest.downloadHandler.text);
-        if (webRequest.downloadHandler.text == "Login Successful")
+        if (webRequest.downloadHandler.text == "Login successful")
         {
+            print("Loading scene");
             SceneManager.LoadScene(1);
         }
         else
         {
-            loginTooltip.text = webRequest.downloadHandler.text;
+            //loginTooltip.text = webRequest.downloadHandler.text;
         }
     }
     #endregion
@@ -181,18 +224,17 @@ public class Login : MonoBehaviour
 
     }
 
-    public IEnumerator UpdatePassword(string username, string newPassword)
+    public IEnumerator UpdatePassword(string username, string createPassword)
     {
         string updatePasswordURL = "http://localhost/nsirpg/updatepassword.php";
         WWWForm form = new WWWForm();
         form.AddField("username_Post", username);
-        form.AddField("password_Post", newPassword);
+        form.AddField("password_Post", createPassword);
         UnityWebRequest webRequest = UnityWebRequest.Post(updatePasswordURL, form);
         yield return webRequest.SendWebRequest();
         Debug.Log(webRequest.downloadHandler.text);
     }
-    #endregion Forgot password
-
+    #endregion
 
     #region Forgot password
     public void InputResetEmail()
@@ -211,23 +253,26 @@ public class Login : MonoBehaviour
 
         if (webRequest.downloadHandler.text != "User not found")
         {
-            SendEmail(resetEmail.text, webRequest.downloadHandler.text);
+            usernameForResetting = webRequest.downloadHandler.text;
+            print(usernameForResetting);
+            SendResetEmail(resetEmail.text, usernameForResetting);
         }
         else
         {
             //createAccountToolTip.text = webRequest.downloadHandler.text; Add tooltip to say user not found
             print(webRequest.downloadHandler.text);
-
         }
     }
 
-    public void SendEmail(string _email, string _username)
+    public void SendResetEmail(string _email, string _username)
     {
+        validationCode = GenerateCode(codeLength, caseSensitiveCode);
+        print(validationCode);
         MailMessage mail = new MailMessage();
         mail.From = new MailAddress("sqlunityclasssydney@gmail.com");
         mail.To.Add(_email);
         mail.Subject = "NSIRPG Password Reset";
-        mail.Body = "Hello " + _username + ",\nReset your password using this code: " + GenerateCode(codeLength, caseSensitiveCode);
+        mail.Body = "Hello, " + _username + ",\nReset your password using this code: " + validationCode;
         SmtpClient smtpServer = new SmtpClient("smtp.gmail.com");
         smtpServer.Port = portNumber;
         smtpServer.Credentials = new NetworkCredential("sqlunityclasssydney@gmail.com", "sqlpassword") as ICredentialsByHost; // MAKE PASSWORD AND EMAIL INTO PUBLIC VARIABLES
@@ -254,7 +299,23 @@ public class Login : MonoBehaviour
         }
         return finalCode;
     }
+
+    public void CheckCode()
+    {
+        bool passwordIsValid = ValidatePassword(resetPassword.text, confirmResetPassword.text);
+        if (passwordIsValid == true && codeInput.text == validationCode)
+        {
+            StartCoroutine(UpdatePassword(usernameForResetting, resetPassword.text));
+        }
+        else
+        {
+            string passwordResetError = passwordError;
+            if (codeInput.text != validationCode)
+            {
+                passwordResetError += "Verification code does not match the one sent to the email.";
+            }
+            resetPasswordErrorLog.text = passwordResetError;
+        }
+    }
     #endregion
-
-
 }
