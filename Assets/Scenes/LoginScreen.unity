@@ -1375,7 +1375,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Create Account
+  m_Text: Change Password
 --- !u!222 &382052044
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2437,7 +2437,7 @@ GameObject:
   - component: {fileID: 621245493}
   - component: {fileID: 621245492}
   m_Layer: 5
-  m_Name: CreateAccount
+  m_Name: ChangePassword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2504,7 +2504,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1454833970}
-        m_MethodName: SubmitLogin
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3127,7 +3127,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: E.g. john.doe@fakemail.com
+  m_Text: 
 --- !u!222 &798807377
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6239,7 +6239,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loginScreen: {fileID: 725693654}
   createAccountScreen: {fileID: 580799761}
-  changePasswordScreen: {fileID: 948315782}
   forgotPasswordScreen: {fileID: 1059079560}
   loginUsername: {fileID: 2021499071}
   loginPassword: {fileID: 1238722164}
@@ -6250,11 +6249,6 @@ MonoBehaviour:
   createPassword: {fileID: 34425145}
   confirmCreatePassword: {fileID: 1450639756}
   createAccountErrorLog: {fileID: 912472086}
-  changeEmail: {fileID: 1900688842}
-  oldPassword: {fileID: 1900688842}
-  changePassword: {fileID: 1036936506}
-  confirmChangePassword: {fileID: 1658135331}
-  changePasswordErrorLog: {fileID: 829038238}
   resetEmail: {fileID: 178699434}
   codeInput: {fileID: 1824349015}
   resetPassword: {fileID: 212423515}
@@ -8278,7 +8272,7 @@ GameObject:
   - component: {fileID: 2022273848}
   - component: {fileID: 2022273847}
   m_Layer: 5
-  m_Name: InputEmail
+  m_Name: InputUsername
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8337,7 +8331,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Email
+  m_Text: Username
 --- !u!222 &2022273848
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -19,7 +19,7 @@ public class Login : MonoBehaviour
     [Header("Screens")]
     public GameObject loginScreen;
     public GameObject createAccountScreen;
-    public GameObject changePasswordScreen;
+    //public GameObject changePasswordScreen;
     public GameObject forgotPasswordScreen;
 
     [Header("Login")]
@@ -34,14 +34,14 @@ public class Login : MonoBehaviour
     public InputField createPassword;
     public InputField confirmCreatePassword;
     public Text createAccountErrorLog;
-
+    /*
     [Header("Change password")]
-    public InputField changeEmail;
+    public InputField changeUsername;
     public InputField oldPassword;
     public InputField changePassword;
     public InputField confirmChangePassword;
     public Text changePasswordErrorLog;
-
+    */
     [Header("Forgot password")]
     public InputField resetEmail;
     public InputField codeInput;
@@ -60,7 +60,7 @@ public class Login : MonoBehaviour
     {
         loginScreen.SetActive(false);
         createAccountScreen.SetActive(false);
-        changePasswordScreen.SetActive(false);
+        //changePasswordScreen.SetActive(false);
         forgotPasswordScreen.SetActive(false);
 
         screen.SetActive(true);
@@ -186,7 +186,7 @@ public class Login : MonoBehaviour
         yield return webRequest.SendWebRequest();
         Debug.Log(webRequest.downloadHandler.text);
         createAccountErrorLog.text = webRequest.downloadHandler.text;
-
+        
         
     }
     #endregion
@@ -213,7 +213,7 @@ public class Login : MonoBehaviour
         }
         else
         {
-            //loginTooltip.text = webRequest.downloadHandler.text;
+            loginErrorLog.text = webRequest.downloadHandler.text;
         }
     }
     #endregion
@@ -221,7 +221,22 @@ public class Login : MonoBehaviour
     #region Reset password
     public void InputChangePassword()
     {
-
+        /*
+        bool passwordIsValid = ValidatePassword(changePassword.text, confirmChangePassword.text);
+        if (passwordIsValid == true)
+        {
+            StartCoroutine(UpdatePassword(changeUsername.text, resetPassword.text));
+        }
+        else
+        {
+            string passwordResetError = passwordError;
+            if (codeInput.text != validationCode)
+            {
+                passwordResetError += "Verification code does not match the one sent to the email.";
+            }
+            resetPasswordErrorLog.text = passwordResetError;
+        }
+        */
     }
 
     public IEnumerator UpdatePassword(string username, string createPassword)
